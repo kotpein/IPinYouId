@@ -1,5 +1,11 @@
 package com.epam.hadoop;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IPinYouApp {
 	private static final String ERROR_MESSAGE = "ERROR. Wrong usage. Please try the folowing keys\n"
 			+ " -input \t\t input path to .bz2 file or directory with bzip2 compressed files (example -input /tmp/inputdir)\n"
@@ -11,6 +17,8 @@ public class IPinYouApp {
 	private static String inputPath;
 	private static String outputPath;
 	private static int maxNumThreads;
+	
+	private static final Logger log = LoggerFactory.getLogger(IPinYouApp.class);
 
 	private static void init(String[] args) {
 		for (int i = 0; i < args.length;) {
@@ -31,17 +39,27 @@ public class IPinYouApp {
 				System.exit(0);
 			}
 		}
+		if(inputPath==null||outputPath==null){
+			System.out.println(ERROR_MESSAGE);
+			System.exit(0);
+		}
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		int length = args.length;
 		if (length != 4 || length != 6) {
 			System.out.println(ERROR_MESSAGE);
 			System.exit(0);
 		}
 		init(args);
-
+		IPinYouProcessor processor = new IPinYouProcessor(inputPath, false);
+		try {
+			processor.process();
+			processor.waitBeforeComplition(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+		} catch (IOException | InterruptedException e) {
+			log.error("Failed to process files", e);
+		} 
+		//sort processor.getIdCounterMap();
 	}
 
 }

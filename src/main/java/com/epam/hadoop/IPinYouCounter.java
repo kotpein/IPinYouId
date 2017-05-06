@@ -16,9 +16,13 @@ public class IPinYouCounter implements Runnable {
 
 	@Override
 	public void run() {
-		String[] fields = line.split("\\s");
-		String ipnId = fields[3];
+		String ipnId = getIpinId();
 		evaluate(ipnId);
+	}
+	
+	public String getIpinId(){
+		String[] fields = line.split("\\s");
+		return fields[3];
 	}
 
 	private void evaluate(String ipnId) {

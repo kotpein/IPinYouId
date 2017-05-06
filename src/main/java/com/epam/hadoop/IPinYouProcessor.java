@@ -9,6 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IPinYouProcessor {
 
 	private final ConcurrentHashMap<String, Integer> idCounterMap;
@@ -95,15 +98,21 @@ public class IPinYouProcessor {
 		return counterSuccess && fileProcessSuccess;
 	}
 
-	private void parallelProcessFiles(File[] files) throws InterruptedException {
+	public ConcurrentHashMap<String, Integer> getIdCounterMap() {
+		return idCounterMap;
+	}
+
+	private void parallelProcessFiles(File[] files){
 		for (File file : files) {
 			Runnable task = new Runnable() {
+				Logger log = LoggerFactory.getLogger(getClass());
 				@Override
 				public void run() {
 					try {
 						processFile(file);
 					} catch (IOException e) {
 						e.printStackTrace();
+						log.error("failed to process file in parallel", e);
 					}
 				}
 			};

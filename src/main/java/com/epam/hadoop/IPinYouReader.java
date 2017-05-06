@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 /**
  * Reads lines from single file compressed with BZip2 format
@@ -29,6 +32,9 @@ public class IPinYouReader {
 	}
 
 	public void init() throws IOException {
+		
+//		FileSystem fs = FileSystem.get(new Configuration());
+//		fs.listFiles(new Path(""), false).next();
 		inputStream = new FileInputStream(inputFile);
 		compressorInputStream = new BZip2CompressorInputStream(inputStream);
 		bufferedReader = new BufferedReader(new InputStreamReader(compressorInputStream));
